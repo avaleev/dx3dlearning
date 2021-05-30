@@ -174,12 +174,12 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 
 // Window Exception ---------------------------------------
 
-Window::Exception::Exception(int line, const char* file, HRESULT hr) noexcept :
-	ExceptionHandler(line, file),
+Window::HrException::HrException(int line, const char* file, HRESULT hr) noexcept :
+	Exception(line, file),
 	hr(hr)
 {}
 
-const char* Window::Exception::what() const noexcept {
+const char* Window::HrException::what() const noexcept {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
 		<< "[Error Code] " << GetErrorCode() << std::endl
@@ -190,7 +190,7 @@ const char* Window::Exception::what() const noexcept {
 	return whatBuffer.c_str();
 }
 
-const char* Window::Exception::GetType() const noexcept {
+const char* Window::HrException::GetType() const noexcept {
 	return "Custom Exception";
 }
 
@@ -212,11 +212,11 @@ std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept {
 	return errorString;
 }
 
-HRESULT Window::Exception::GetErrorCode() const  noexcept {
+HRESULT Window::HrException::GetErrorCode() const  noexcept {
 	return hr;
 }
 
-std::string Window::Exception::GetErrorString() const noexcept {
+std::string Window::HrException::GetErrorString() const noexcept {
 	return TranslateErrorCode(hr);
 }
 
@@ -226,7 +226,7 @@ void Window::SetTitle(std::string title) noexcept {
 	}
 }
 
-std::optional<int> Window::ProcessMessages() {
+std::optional<int> Window::ProcessMessages() noexcept {
 	MSG msg;
 
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
@@ -242,5 +242,13 @@ std::optional<int> Window::ProcessMessages() {
 }
 
 Graphics& Window::Gfx() {
+	if (!pGfx) {
+		throw CHWND_NOGFX_EXCEPT();
+	}
 	return *pGfx;
+}
+
+const char* Window::NoGfxException::GetType() const noexcept
+{
+	return "Deviant Window Exception [No Graphics]";
 }
