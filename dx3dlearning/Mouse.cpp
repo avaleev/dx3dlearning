@@ -32,9 +32,7 @@ Mouse::Event Mouse::Read() noexcept {
 
 		return e;
 	}
-	else {
-		return Mouse::Event();
-	}
+	return {};
 }
 
 void Mouse::Flush() noexcept {

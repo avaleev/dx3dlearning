@@ -51,6 +51,7 @@ public:
 public:
 	Mouse() = default;
 	Mouse(const Mouse&) = delete;
+	~Mouse() { buffer = {}; };
 	Mouse& operator=(const Mouse&) = delete;
 	std::pair<int, int> GetPos() const noexcept;
 	int GetPosX() const noexcept;
